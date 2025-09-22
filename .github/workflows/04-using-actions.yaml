@@ -10,14 +10,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-        
+
       - name: Printing Folders
         run: |
           echo "Current working directory:"
           pwd
           echo "Repo root contents:"
           ls -la
-          echo "Exercise folder contents:"
-          ls -la 04-using-actions
+          echo "Non-workflow files:"
+          ls -la non_workflow_files
           echo "React app folder contents:"
-          ls -la 04-using-actions/react-app
+          ls -la react-app
+
