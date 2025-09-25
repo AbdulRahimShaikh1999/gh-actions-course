@@ -1,1 +1,1 @@
-repo containing all practises
+repo containing all CI/CD practises
