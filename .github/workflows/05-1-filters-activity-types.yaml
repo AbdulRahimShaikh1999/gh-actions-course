@@ -2,9 +2,8 @@ name: 05 - 1 - Event Filters and Activity Types
 
 on:
   pull_request:
-    branches: [main]                  # event filter → only PRs targeting main
-    types: [opened, synchronize]      # activity types → only on open/sync
-
+    branches: [main]              
+    types: [closed]
 jobs:
   echo:
     runs-on: ubuntu-latest
