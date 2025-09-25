@@ -1,1 +1,1 @@
-repo containing all practise
+repo containing all practises
