@@ -14,8 +14,8 @@ on:
 
       debug:
         description: "Enable debug mode"
-        type: boolean
-        default: false
+        type: string
+        default: "test"
 
 
 jobs:
