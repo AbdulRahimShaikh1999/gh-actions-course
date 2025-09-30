@@ -1,11 +1,13 @@
-name: 08 - Using Variables
+name: 09 - Org/Repo/Env Variables
 
 on:
   workflow_dispatch:
 
-env:                                  # Workflow-level
+env:                                  # Workflow-level (env.* becomes real env vars)
   WORKFLOW_VAR: "I am a workflow env var"
   OVERWRITTEN: "I will be overwritten"
+  # Pull UNDEFINED_VAR from the vars context, or use a default if it's not defined:
+  UNDEFINED_VAR_WITH_DEFAULT: ${{ vars.UNDEFINED_VAR || 'default value' }}
 
 jobs:
   echo:
@@ -13,14 +15,13 @@ jobs:
     env:                              # Job-level
       JOB_VAR: "I am a job env var"
       OVERWRITTEN: "I have been overwritten at the job level"
-
     steps:
       - name: Print Env Variables
-        env:                          # Step-level 
+        env:                          # Step-level
           STEP_VAR: "I am a step env var"
           step_var2: "I am another step var"
         run: |
-          echo "Step env var: ${{env.STEP_VAR}}"
+          echo "Step env var: ${{ env.STEP_VAR }}"
           echo "Step env var 2: $step_var2"
           echo "Job env var: $JOB_VAR"
           echo "Workflow env var: $WORKFLOW_VAR"
@@ -28,4 +29,35 @@ jobs:
 
       - name: Overwrite Job Variable
         run: |
-          echo "Step env var: $OVERWRITTEN"
+          echo "Overwritten (job-level): $OVERWRITTEN"
+
+  # Prints Org/Repo vars without any environment applied
+  echo2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Variables
+        run: |
+          echo "[Requires Organizations] Org var: ${{ vars.ORG_VAR }}"
+          echo "[Requires Organizations] Org OVERWRITTEN_VAR: ${{ vars.OVERWRITTEN_VAR }}"
+          echo "Repo var: ${{ vars.REPOSITORY_VAR }}"
+
+  # Runs in the 'prod' environment so env-level vars take precedence
+  echo-prod:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Print Prod Variables
+        run: |
+          echo "[Requires Organizations] Org var: ${{ vars.ORG_VAR }}"
+          # This will show 'prod value' because the environment variable overrides org-level
+          echo "Effective OVERWRITTEN_VAR: ${{ vars.OVERWRITTEN_VAR }}"
+          echo "Repo var: ${{ vars.REPOSITORY_VAR }}"
+          echo "Environment TARGET_VAR: ${{ vars.TARGET_VAR }}"
+
+  # Demonstrates fallback default when a var is not defined anywhere
+  echo-undefined:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Undefined Variables
+        run: |
+          echo "UNDEFINED_VAR_WITH_DEFAULT: ${{ env.UNDEFINED_VAR_WITH_DEFAULT }}"
